@@ -33,6 +33,7 @@ public class TodoController {
     }
 
     @GetMapping("/")
+    @Transactional
     public Iterable<Object> getTodos() {
         List<Object> list=new ArrayList<>();
         try (Connection conn = dataSource.getConnection()) {
@@ -44,7 +45,7 @@ public class TodoController {
             list.add(conn.getMetaData().getSchemas().getFetchSize());
 
             List<Object> list01 = new ArrayList<>();
-            DatabaseMetaData metaData = dataSource.getConnection().getMetaData();
+            DatabaseMetaData metaData = conn.getMetaData();
             ResultSet tables = metaData.getTables(null, null, null, new String[] { "TABLE" });
             while (tables.next()) {
                 String tableName=tables.getString("TABLE_NAME");
