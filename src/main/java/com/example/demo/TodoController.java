@@ -10,6 +10,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,27 +36,29 @@ public class TodoController {
 
     @GetMapping("/")
     @Transactional
-    public String getTodos() {
-        List<Object> list = new ArrayList<>();
+    public HashMap<String, Object> getTodos(){
+        HashMap<String, Object> fullTableObject = new HashMap<>();
         try (Connection conn = dataSource.getConnection()) {
-            List<Object> list01 = new ArrayList<>();
-            List<Object> list02 = new ArrayList<>();
             DatabaseMetaData metaData = conn.getMetaData();
             ResultSet tables = metaData.getTables(null, null, null, new String[] { "TABLE" });
-            for (tables.next()) {
-                String tableName = tables.getString("TABLE_NAME");
-                System.out.println(tableName);
-                list01.add(tableName);
+            while (tables.next()) {
+                String tableName = "";
+                List<String> columnNames = new ArrayList<>();
+                tableName = tables.getString("TABLE_NAME");
                 ResultSet columns = metaData.getColumns(null,  null,  tableName, "%");
                 while (columns.next()) {
                     String columnName =columns.getString("COLUMN_NAME");
-                    list02.add(columnName);
+                    columnNames.add(columnName);
                 }
+                if(!tableName.equals("trace_xe_event_map") && !tableName.equals("trace_xe_action_map")){
+                    fullTableObject.put(tableName,columnNames);
+                }
+
             }
             //list.add(list01);
-            return "Table:" + list01 +"-----"+ "Column:" + list02;
-        } catch (SQLException throwable) {
-            throwable.printStackTrace();
+            return fullTableObject;
+        } catch (SQLException e) {
+            e.printStackTrace();
             return null;
         }
     }
