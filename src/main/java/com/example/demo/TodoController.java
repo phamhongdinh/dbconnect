@@ -35,32 +35,25 @@ public class TodoController {
 
     @GetMapping("/")
     @Transactional
-    public Iterable<Object> getTodos() {
-        List<Object> list=new ArrayList<>();
+    public String getTodos() {
+        List<Object> list = new ArrayList<>();
         try (Connection conn = dataSource.getConnection()) {
-            conn.getMetaData().getClientInfoProperties();
-            list.add(conn.getMetaData().getDatabaseProductVersion());
-
-            list.add(conn.getMetaData().getDatabaseProductName());
-            list.add(conn.getMetaData().getUserName());
-            list.add(conn.getMetaData().getSchemas().getFetchSize());
-
             List<Object> list01 = new ArrayList<>();
+            List<Object> list02 = new ArrayList<>();
             DatabaseMetaData metaData = conn.getMetaData();
             ResultSet tables = metaData.getTables(null, null, null, new String[] { "TABLE" });
-            while (tables.next()) {
-                String tableName=tables.getString("TABLE_NAME");
+            for (tables.next()) {
+                String tableName = tables.getString("TABLE_NAME");
                 System.out.println(tableName);
                 list01.add(tableName);
-
                 ResultSet columns = metaData.getColumns(null,  null,  tableName, "%");
                 while (columns.next()) {
-                    String columnName=columns.getString("COLUMN_NAME");
-
+                    String columnName =columns.getString("COLUMN_NAME");
+                    list02.add(columnName);
                 }
             }
-            list.add(list01);
-            return list;
+            //list.add(list01);
+            return "Table:" + list01 +"-----"+ "Column:" + list02;
         } catch (SQLException throwable) {
             throwable.printStackTrace();
             return null;
