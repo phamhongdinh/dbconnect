@@ -2,6 +2,8 @@ package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.DataSource;
@@ -14,13 +16,23 @@ import java.util.HashMap;
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
-@RestController
-@RequestMapping("/")
+@Controller
 public class TodoController {
 
     @Autowired
     private DataSource dataSource;
-    @GetMapping("/")
+
+    @GetMapping("/index")
+    public String index(Model model) {
+
+        // add `message` attribute
+        model.addAttribute("message", "Thank you for visiting.");
+
+        // return view name
+        return "index";
+    }
+
+    @GetMapping("/api")
     @Transactional
     public HashMap<String, Object> getTodos(){
         HashMap<String, Object> fullTableObject = new HashMap<>();
