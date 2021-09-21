@@ -2,12 +2,29 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Spring Boot Thymeleaf Web Application</title>
+    <title>Database Management</title>
 </head>
 <body>
-<h1>Welcome to Spring Boot Thymeleaf</h1>
-<p>
-    Hey there! <th:block th:text="${message}">message</th:block>
-</p>
+<h1 th:text="${'Connect to ' + databaseName +' database'}"></h1>
+<table>
+    <thead>
+    <tr>
+        <th> Table Name</th>
+        <th> Column Name</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each=" tableDb : ${tables}">
+        <td th:text="${tableDb.tableName}"></td>
+        <td>
+            <select>
+                <th:block th:each=" tableDb : ${tableDb.columnName}">
+                    <option th:text="${tableDb}"></option>
+                </th:block>
+            </select>
+        </td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
