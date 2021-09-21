@@ -18,22 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequestMapping("/")
 public class TodoController {
 
-    private final TodoRepository todoRepository;
     @Autowired
     private DataSource dataSource;
-
-
-
-    public TodoController(TodoRepository todoRepository) {
-        this.todoRepository = todoRepository;
-    }
-
-    @PostMapping("/")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Todo createTodo(@RequestBody Todo todo) {
-        return todoRepository.save(todo);
-    }
-
     @GetMapping("/")
     @Transactional
     public HashMap<String, Object> getTodos(){
@@ -53,9 +39,7 @@ public class TodoController {
                 if(!tableName.equals("trace_xe_event_map") && !tableName.equals("trace_xe_action_map")){
                     fullTableObject.put(tableName,columnNames);
                 }
-
             }
-            //list.add(list01);
             return fullTableObject;
         } catch (SQLException e) {
             e.printStackTrace();
